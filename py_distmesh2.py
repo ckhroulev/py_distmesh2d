@@ -15,6 +15,9 @@ def drectangle(pts, x1, x2, y1, y2):
 def ddiff(d1, d2):
     return np.maximum(d1, -d2)
 
+def dintersect(d1, d2):
+    return np.maximum(d1, d2)
+
 def dunion(d1, d2):
     return np.minimum(d1, d2)
 
@@ -94,16 +97,36 @@ def distmesh2d(fd, fh, h0, bbox, pfix, *args):
 
     return p, t
 
-figure()
+def plot_mesh(pts, tri):
+    figure()
+    triplot(pts[:,0], pts[:,1], tri, "b-", lw=2)
+    axis('tight')
+    axes().set_aspect('equal')
 
-h0 = 0.1
 bbox = [[-1, 1], [-1, 1]]
-pfix = [[-1,-1], [-1,1], [1,-1], [1,1]]
-pts, tri = distmesh2d(example3, huniform, h0, bbox, pfix)
+square = [[-1,-1], [-1,1], [1,-1], [1,1]]
 
-triplot(pts[:,0], pts[:,1], tri, "b-", lw=2)
+# example 1a
+pts, tri = distmesh2d(example1, huniform, 0.4, bbox, pfix)
 
-axis('tight')
-axes().set_aspect('equal')
+# example 1b
+figure()
+pts, tri = distmesh2d(example1, huniform, 0.2, bbox, pfix)
+plot_mesh(pts, tri)
+
+# example 1c
+figure()
+pts, tri = distmesh2d(example1, huniform, 0.1, bbox, pfix)
+plot_mesh(pts, tri)
+
+# example 2
+figure()
+pts, tri = distmesh2d(example2, huniform, 0.1, bbox, pfix)
+plot_mesh(pts, tri)
+
+# example 3a
+figure()
+pts, tri = distmesh2d(example3, huniform, 0.15, bbox, pfix)
+plot_mesh(pts, tri)
 
 show()
