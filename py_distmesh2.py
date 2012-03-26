@@ -5,18 +5,24 @@ import numpy as np
 from numpy import sqrt, sum
 from pylab import figure, triplot, axis, axes, show, clf, vstack
 
-def dcircle(pts, *args):
-    return sqrt(pts[:,0]**2 + pts[:,1]**2) - 1.0
+def dcircle(pts, xc, yc, r):
+    return sqrt((pts[:,0] - xc)**2 + (pts[:,1] - yc)**2) - r
 
 def drectangle(pts, x1, x2, y1, y2):
     return -np.min(np.min(np.min(-y1+p[:,1], y2-p[:,1]),
                           -x1+p[:,0], x2-p[:,0]))
 
+def ddiff(d1, d2):
+    return np.maximum(d1, -d2)
+
+def dunion(d1, d2):
+    return np.minimum(d1, d2)
+
 def example1(pts, *args):
-    return sqrt(sum(pts**2, 1)) - 1
+    return dcircle(pts, 0, 0, 1)
 
 def example2(pts, *args):
-    return -0.3 + np.abs(0.7 - sqrt(sum(pts**2, 1)))
+    return ddiff(dcircle(pts, 0, 0, 0.7), dcircle(pts, 0, 0, 0.3))
 
 def huniform(pts, *args):
     return np.ones((pts.shape[0], 1))
@@ -84,7 +90,7 @@ figure()
 h0 = 0.1
 bbox = [[-1, 1], [-1, 1]]
 pfix = [[-1,-1], [-1,1], [1,-1], [1,1]]
-pts, tri = distmesh2d(example1, huniform, h0, bbox, [])
+pts, tri = distmesh2d(example2, huniform, h0, bbox, [])
 
 triplot(pts[:,0], pts[:,1], tri, "b-", lw=2)
 
