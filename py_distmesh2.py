@@ -45,6 +45,10 @@ def annulus_h(pts):
 def huniform(pts, *args):
     return np.ones((pts.shape[0], 1))
 
+def star(pts):
+    return dunion(dintersect(dcircle(pts, sqrt(3), 0, 2), dcircle(pts, -sqrt(3), 0, 2)),
+                  dintersect(dcircle(pts, 0, sqrt(3), 2), dcircle(pts, 0, -sqrt(3), 2)))
+
 def distmesh2d(fd, fh, h0, bbox, pfix, *args):
     # parameters
     dptol = 0.001; ttol = 0.1; Fscale = 1.2; deltat = 0.2;
@@ -187,3 +191,11 @@ def annulus():
     plot_mesh(pts, tri)
     show()
 
+# a "star" built using circles
+def star_mesh():
+    figure()
+    # fake the corners:
+    pfix = [[0.25, 0.25], [-0.25, 0.25], [-0.25, -0.25], [0.25, -0.25]]
+    pts, tri = distmesh2d(star, huniform, 0.1, bbox, pfix)
+    plot_mesh(pts, tri)
+    show()
