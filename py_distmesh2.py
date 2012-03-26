@@ -33,6 +33,15 @@ def example3(pts):
 def example3_h(pts):
     return np.minimum(4*sqrt(sum(pts**2, 1)) - 1, 2)
 
+def example3_online(pts):
+    return ddiff(drectangle(pts, -1, 1, -1, 1), dcircle(pts, 0, 0, 0.5))
+
+def example3_online_h(pts):
+    return 0.05 + 0.3 * dcircle(pts, 0, 0, 0.5)
+
+def annulus_h(pts):
+    return 0.04 + 0.15 * dcircle(pts, 0, 0, 0.3)
+
 def huniform(pts, *args):
     return np.ones((pts.shape[0], 1))
 
@@ -123,32 +132,58 @@ bbox = [[-1, 1], [-1, 1]]
 square = [[-1,-1], [-1,1], [1,-1], [1,1]]
 
 # example 1a
-pts, tri = distmesh2d(example1, huniform, 0.4, bbox, [])
-plot_mesh(pts, tri)
+def example_1a():
+    figure()
+    pts, tri = distmesh2d(example1, huniform, 0.4, bbox, [])
+    plot_mesh(pts, tri)
+    show()
 
 # example 1b
-figure()
-pts, tri = distmesh2d(example1, huniform, 0.2, bbox, [])
-plot_mesh(pts, tri)
+def example_1b():
+    figure()
+    pts, tri = distmesh2d(example1, huniform, 0.2, bbox, [])
+    plot_mesh(pts, tri)
+    show()
 
 # example 1c
-figure()
-pts, tri = distmesh2d(example1, huniform, 0.1, bbox, [])
-plot_mesh(pts, tri)
+def example_1c():
+    figure()
+    pts, tri = distmesh2d(example1, huniform, 0.1, bbox, [])
+    plot_mesh(pts, tri)
+    show()
 
 # example 2
-figure()
-pts, tri = distmesh2d(example2, huniform, 0.1, bbox, [])
-plot_mesh(pts, tri)
+def example_2():
+    figure()
+    pts, tri = distmesh2d(example2, huniform, 0.1, bbox, [])
+    plot_mesh(pts, tri)
+    show()
 
 # example 3a
-figure()
-pts, tri = distmesh2d(example3, huniform, 0.15, bbox, square)
-plot_mesh(pts, tri, example3(pts))
+def example_3a():
+    figure()
+    pts, tri = distmesh2d(example3, huniform, 0.15, bbox, square)
+    plot_mesh(pts, tri, example3(pts))
+    show()
 
 # example 3b
-figure()
-pts, tri = distmesh2d(example3, example3_h, 0.035, bbox, square)
-plot_mesh(pts, tri)
+def example_3b():
+    figure()
+    pts, tri = distmesh2d(example3, example3_h, 0.035, bbox, square)
+    plot_mesh(pts, tri)
+    show()
 
-show()
+# example (current online version)
+def example_3_online():
+    figure()
+    pts, tri = distmesh2d(example3_online, example3_online_h, 0.02, bbox, square)
+    plot_mesh(pts, tri)
+    show()
+
+# annulus, non-uniform
+def annulus():
+    figure()
+    pts, tri = distmesh2d(example2, annulus_h, 0.04, bbox, square)
+    plot_mesh(pts, tri)
+    show()
+
