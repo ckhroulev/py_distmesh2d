@@ -9,8 +9,8 @@ def dcircle(pts, xc, yc, r):
     return sqrt((pts[:,0] - xc)**2 + (pts[:,1] - yc)**2) - r
 
 def drectangle(pts, x1, x2, y1, y2):
-    return -np.min(np.min(np.min(-y1+p[:,1], y2-p[:,1]),
-                          -x1+p[:,0], x2-p[:,0]))
+    return -np.minimum(np.minimum(np.minimum(-y1+pts[:,1], y2-pts[:,1]),
+                                  -x1+pts[:,0]), x2-pts[:,0])
 
 def ddiff(d1, d2):
     return np.maximum(d1, -d2)
@@ -18,16 +18,23 @@ def ddiff(d1, d2):
 def dunion(d1, d2):
     return np.minimum(d1, d2)
 
-def example1(pts, *args):
+def example1(pts):
     return dcircle(pts, 0, 0, 1)
 
-def example2(pts, *args):
+def example2(pts):
     return ddiff(dcircle(pts, 0, 0, 0.7), dcircle(pts, 0, 0, 0.3))
+
+def example3(pts):
+    return ddiff(drectangle(pts, -1, 1, -1, 1), dcircle(pts, 0, 0, 0.4))
+
+def example3_h(pts):
+    return np.minimum(4*sqrt(sum(pts**2, 1)) - 1, 2)
 
 def huniform(pts, *args):
     return np.ones((pts.shape[0], 1))
 
 def distmesh2d(fd, fh, h0, bbox, pfix, *args):
+    global p, t, F, barvec, L, L0, hbars
     dptol = 0.001; ttol = 0.1; Fscale = 1.2; deltat = 0.2;
     geps = 0.001 * h0; deps = sqrt(np.finfo(float).eps) * h0
 
@@ -61,7 +68,7 @@ def distmesh2d(fd, fh, h0, bbox, pfix, *args):
 
         barvec = p[bars[:,0]] - p[bars[:,1]]
         L = sqrt(sum(barvec**2, 1)).reshape((-1,1))
-        hbars = fh((p[bars[:,0]] + p[bars[:,1]]) / 2.0, *args)
+        hbars = fh((p[bars[:,0]] + p[bars[:,1]]) / 2.0, *args).reshape((-1,1))
         L0 = hbars * Fscale * sqrt(sum(L**2) / sum(hbars**2))
 
         F = np.maximum(L0 - L, 0)
@@ -70,6 +77,8 @@ def distmesh2d(fd, fh, h0, bbox, pfix, *args):
         Ftot[:] = 0
         for j in xrange(bars.shape[0]):
             Ftot[bars[j]] += [Fvec[j], -Fvec[j]]
+
+        Ftot[0:len(pfix), :] = 0.0
 
         p += deltat * Ftot
 
@@ -90,7 +99,7 @@ figure()
 h0 = 0.1
 bbox = [[-1, 1], [-1, 1]]
 pfix = [[-1,-1], [-1,1], [1,-1], [1,1]]
-pts, tri = distmesh2d(example2, huniform, h0, bbox, [])
+pts, tri = distmesh2d(example3, huniform, h0, bbox, pfix)
 
 triplot(pts[:,0], pts[:,1], tri, "b-", lw=2)
 
