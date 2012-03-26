@@ -59,15 +59,17 @@ def distmesh2d(fd, fh, h0, bbox, pfix, *args):
     pold = np.zeros_like(p)
     Ftot = np.zeros_like(p)
 
+    def triangulate(pts):
+        tri = np.sort(Delaunay(pts).vertices, axis=1)
+        pmid = sum(pts[tri], 1) / 3
+        return tri[fd(pmid, *args) < -geps]
+
     while True:
         if sqrt(sum((p - pold)**2, 1)).max() > ttol:
             pold[:] = p[:]
-            t = np.sort(Delaunay(p).vertices, axis=1)
-            pmid = sum(p[t], 1) / 3
-            t = t[fd(pmid, *args) < -geps]
+            t = triangulate(p)
             bars = t[:, [[0,1], [1,2], [0,2]]].reshape((-1, 2))
             bars = np.unique(bars.view("i,i")).view("i").reshape((-1,2))
-            print ":"
 
         barvec = p[bars[:,0]] - p[bars[:,1]]
         L = sqrt(sum(barvec**2, 1)).reshape((-1,1))
@@ -91,14 +93,12 @@ def distmesh2d(fd, fh, h0, bbox, pfix, *args):
 
         p[ix] -= vstack((d[ix] * dgradx, d[ix] * dgrady)).T
 
-        print "."
         if (sqrt(sum((deltat * Ftot[d < -geps])**2, 1)) / h0).max() < dptol:
             break
 
-    return p, t
+    return p, triangulate(p)
 
 def plot_mesh(pts, tri):
-    figure()
     triplot(pts[:,0], pts[:,1], tri, "b-", lw=2)
     axis('tight')
     axes().set_aspect('equal')
@@ -107,26 +107,27 @@ bbox = [[-1, 1], [-1, 1]]
 square = [[-1,-1], [-1,1], [1,-1], [1,1]]
 
 # example 1a
-pts, tri = distmesh2d(example1, huniform, 0.4, bbox, pfix)
+pts, tri = distmesh2d(example1, huniform, 0.4, bbox, [])
+plot_mesh(pts, tri)
 
 # example 1b
 figure()
-pts, tri = distmesh2d(example1, huniform, 0.2, bbox, pfix)
+pts, tri = distmesh2d(example1, huniform, 0.2, bbox, [])
 plot_mesh(pts, tri)
 
 # example 1c
 figure()
-pts, tri = distmesh2d(example1, huniform, 0.1, bbox, pfix)
+pts, tri = distmesh2d(example1, huniform, 0.1, bbox, [])
 plot_mesh(pts, tri)
 
 # example 2
 figure()
-pts, tri = distmesh2d(example2, huniform, 0.1, bbox, pfix)
+pts, tri = distmesh2d(example2, huniform, 0.1, bbox, [])
 plot_mesh(pts, tri)
 
 # example 3a
 figure()
-pts, tri = distmesh2d(example3, huniform, 0.15, bbox, pfix)
+pts, tri = distmesh2d(example3, huniform, 0.15, bbox, square)
 plot_mesh(pts, tri)
 
 show()
