@@ -7,6 +7,16 @@ from numpy import sqrt, sum, vstack
 __all__ = ["distmesh2d", "dcircle", "drectangle", "ddiff",
            "dintersect", "dunion", "huniform"]
 
+try:
+    from scipy.spatial import Delaunay
+    def delaunay(pts):
+        return Delaunay(pts).vertices
+except:
+    import matplotlib.delaunay as md
+    def delaunay(pts):
+        _, _, tri, _ = md.delaunay(pts[:,0], pts[:,1])
+        return tri
+
 def distmesh2d(fd, fh, h0, bbox, pfix, *args):
     """A re-implementation of the MATLAB distmesh2d function by Persson and Strang.
 
@@ -61,7 +71,7 @@ def distmesh2d(fd, fh, h0, bbox, pfix, *args):
         Compute the Delaunay triangulation and remove trianges with
         centroids outside the domain.
         """
-        tri = np.sort(Delaunay(pts).vertices, axis=1)
+        tri = np.sort(delaunay(pts), axis=1)
         pmid = sum(pts[tri], 1) / 3
         return tri[fd(pmid, *args) < -geps]
 
