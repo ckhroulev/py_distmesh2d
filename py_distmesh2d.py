@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-from scipy.spatial import Delaunay
 import numpy as np
 from numpy import sqrt, sum, vstack
 
