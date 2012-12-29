@@ -113,3 +113,17 @@ def circle_nonuniform():
     pts, tri = distmesh2d(example1, circle_h, 0.1, bbox, [])
     plot_mesh(pts, tri)
     show()
+
+def ell():
+    """L-shaped domain from 'Finite Elements and Fast Iterative Solvers'
+    by Elman, Silvester, and Wathen."""
+
+    pfix = [[1,1], [1, -1], [0, -1], [0, 0], [-1, 0], [-1, 1]]
+
+    def d(pts):
+        return ddiff(drectangle(pts, -1, 1, -1, 1), drectangle(pts, -2, 0, -2, 0))
+
+    figure()
+    pts, tri = distmesh2d(d, huniform, 0.1, bbox, pfix)
+    plot_mesh(pts, tri)
+    show()
