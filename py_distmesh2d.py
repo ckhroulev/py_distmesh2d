@@ -3,7 +3,7 @@ import numpy as np
 from numpy import sqrt, sum, vstack
 
 __all__ = ["distmesh2d", "dcircle", "drectangle", "ddiff",
-           "dintersect", "dunion", "huniform"]
+           "dintersect", "dunion", "huniform", "fixmesh"]
 
 try:
     from scipy.spatial import Delaunay
@@ -14,6 +14,39 @@ except:
     def delaunay(pts):
         _, _, tri, _ = md.delaunay(pts[:,0], pts[:,1])
         return tri
+
+def fixmesh(pts, tri):
+    # find doubles
+    doubles = []
+    N = pts.shape[0]
+    for i in xrange(N):
+        for j in xrange(i+1,N):
+            if np.linalg.norm(pts[i] - pts[j]) == 0:
+                doubles.append(j)
+
+    # remove doubles
+    while len(doubles) > 0:
+        j = doubles.pop()
+
+        # remove a double
+        pts = np.vstack([pts[0:j], pts[j+1:]])
+
+        # update all triangles that reference points after the one removed
+        for k in xrange(tri.shape[0]):
+            for l in xrange(3):
+                if tri[k, l] > j:
+                    tri[k, l] -= 1
+
+    # check (and fix) node order in triangles
+    for k in xrange(tri.shape[0]):
+        a = pts[tri[k, 0]]
+        b = pts[tri[k, 1]]
+        c = pts[tri[k, 2]]
+
+        if np.cross(b - a, c - a) > 0:
+            tri[k, 2], tri[k, 1] = tri[k, 1], tri[k, 2]
+
+    return pts, tri
 
 def distmesh2d(fd, fh, h0, bbox, pfix, *args):
     """A re-implementation of the MATLAB distmesh2d function by Persson and Strang.
@@ -138,3 +171,4 @@ def dunion(d1, d2):
 def huniform(pts, *args):
     "Triangle size function giving a near-uniform mesh."
     return np.ones((pts.shape[0], 1))
+
