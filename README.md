@@ -11,4 +11,4 @@ This repository contains a Python re-implementation of `distmesh2d` in *P.-O. Pe
 
 It seems to work, though:
 
-![example 3](py_distmesh2d/raw/master/example3.png)
+![example 3](https://raw.github.com/ckhroulev/py_distmesh2d/master/example3.png)
