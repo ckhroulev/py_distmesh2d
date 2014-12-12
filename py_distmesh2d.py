@@ -3,7 +3,7 @@ import numpy as np
 from numpy import sqrt, sum, vstack
 
 __all__ = ["distmesh2d", "dcircle", "drectangle", "ddiff",
-           "dintersect", "dunion", "huniform", "fixmesh"]
+           "dintersect", "dunion", "huniform", "fixmesh", "boundary_mask"]
 
 try:
     from scipy.spatial import Delaunay
@@ -172,3 +172,29 @@ def huniform(pts, *args):
     "Triangle size function giving a near-uniform mesh."
     return np.ones((pts.shape[0], 1))
 
+def boundary_mask(pts, fd, h0):
+    """Return an array of booleans, one for each point in pts: True if a
+    point is at the boundary and False otherwise.
+
+    This may make mistakes, especially if there are badly formed
+    (skinny) triangles in the mesh.
+
+    Parameters:
+    ==========
+
+    fd: a signed distance function, negative inside the domain
+    pts: list of points returned by distmesh2d with the same distance
+         function fd
+    h0: element size parameter used with distmesh2d
+
+    """
+    # get the number of points
+    N = pts.shape[0]
+    geps = 0.01 * h0
+    mask = np.zeros(N, dtype="bool")
+    distance = fd(pts)
+    for j in xrange(N):
+        if distance[j] > -geps:
+            mask[j] = True
+
+    return mask
