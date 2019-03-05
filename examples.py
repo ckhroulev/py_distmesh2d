@@ -1,4 +1,4 @@
-from pylab import figure, triplot, tripcolor, axis, axes, show, hold, plot
+from pylab import figure, triplot, tripcolor, axis, axes, show, plot
 from py_distmesh2d import *
 import numpy as np
 
@@ -96,7 +96,6 @@ def example_3_online():
     figure()
     pts, tri = distmesh2d(example3_online, example3_online_h, 0.02, bbox, square)
     boundary = boundary_mask(pts, example3_online, 0.02)
-    hold(True)
     plot_mesh(pts, tri)
     plot_nodes(pts, boundary)
     show()
@@ -106,7 +105,6 @@ def annulus():
     figure()
     pts, tri = distmesh2d(example2, annulus_h, 0.04, bbox, square)
     boundary = boundary_mask(pts, example2, 0.04)
-    hold(True)
     plot_mesh(pts, tri)
     plot_nodes(pts, boundary)
     show()
@@ -119,7 +117,6 @@ def star_mesh():
     pts, tri = distmesh2d(star, huniform, 0.1, bbox, pfix)
     boundary = boundary_mask(pts, star, 0.5) # note how large h0 has to be here
     print(star(np.array(pfix)))
-    hold(True)
     plot_mesh(pts, tri)
     plot_nodes(pts, boundary)
     show()
