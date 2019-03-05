@@ -19,8 +19,8 @@ def fixmesh(pts, tri):
     # find doubles
     doubles = []
     N = pts.shape[0]
-    for i in xrange(N):
-        for j in xrange(i+1,N):
+    for i in range(N):
+        for j in range(i+1,N):
             if np.linalg.norm(pts[i] - pts[j]) == 0:
                 doubles.append(j)
 
@@ -32,13 +32,13 @@ def fixmesh(pts, tri):
         pts = np.vstack([pts[0:j], pts[j+1:]])
 
         # update all triangles that reference points after the one removed
-        for k in xrange(tri.shape[0]):
-            for l in xrange(3):
+        for k in range(tri.shape[0]):
+            for l in range(3):
                 if tri[k, l] > j:
                     tri[k, l] -= 1
 
     # check (and fix) node order in triangles
-    for k in xrange(tri.shape[0]):
+    for k in range(tri.shape[0]):
         a = pts[tri[k, 0]]
         b = pts[tri[k, 1]]
         c = pts[tri[k, 2]]
@@ -126,7 +126,7 @@ def distmesh2d(fd, fh, h0, bbox, pfix, *args):
 
         # Sum to get total forces for each point:
         Ftot[:] = 0
-        for j in xrange(bars.shape[0]):
+        for j in range(bars.shape[0]):
             Ftot[bars[j]] += [Fvec[j], -Fvec[j]]
 
         # zero out forces at fixed points:
@@ -193,7 +193,7 @@ def boundary_mask(pts, fd, h0):
     geps = 0.01 * h0
     mask = np.zeros(N, dtype="bool")
     distance = fd(pts)
-    for j in xrange(N):
+    for j in range(N):
         if distance[j] > -geps:
             mask[j] = True
 

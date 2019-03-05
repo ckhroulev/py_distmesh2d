@@ -118,7 +118,7 @@ def star_mesh():
     pfix = [[0.25, 0.25], [-0.25, 0.25], [-0.25, -0.25], [0.25, -0.25]]
     pts, tri = distmesh2d(star, huniform, 0.1, bbox, pfix)
     boundary = boundary_mask(pts, star, 0.5) # note how large h0 has to be here
-    print star(np.array(pfix))
+    print(star(np.array(pfix)))
     hold(True)
     plot_mesh(pts, tri)
     plot_nodes(pts, boundary)
